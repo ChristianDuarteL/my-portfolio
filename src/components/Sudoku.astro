@@ -1,0 +1,36 @@
+---
+interface Props {
+    class: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<canvas class={className} id="sudoku"></canvas>
+
+<script>
+    const sudokuCanvas = document.getElementById("sudoku")
+    if(sudokuCanvas instanceof HTMLCanvasElement) {
+
+        const repaint = () => {
+            const ctx = sudokuCanvas.getContext("2d");
+            if(ctx == null) {
+                return;
+            }
+            ctx.clearRect(0, 0, sudokuCanvas.width, sudokuCanvas.height);
+            ctx.fillStyle = "#999";
+            ctx.textAlign = "center";
+            ctx.font = "bold 40px sans-serif";
+            ctx.textBaseline = "middle";
+            ctx.fillText("Sudoku", sudokuCanvas.width / 2, sudokuCanvas.height / 2);
+        };
+        
+        const sudokuResizeObserver = new ResizeObserver(() => {
+            sudokuCanvas.width = sudokuCanvas.offsetWidth;
+            sudokuCanvas.height = sudokuCanvas.offsetHeight;
+            repaint();
+        });
+        sudokuResizeObserver.observe(sudokuCanvas);
+        repaint();
+    }
+</script>

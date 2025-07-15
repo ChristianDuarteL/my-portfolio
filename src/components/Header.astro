@@ -1,0 +1,29 @@
+---
+interface Props {
+    links: {
+        text: string;
+        href: string;
+    }[];
+}
+
+const { links } = Astro.props;
+---
+
+<header class="flex flex-col justify-center items-center border-b-1 pt-4 px-10 sticky top-0 bg-noise">
+    <h1 class="font-bold text-3xl font-serif-title text-center sm:text-6xl">Christian Duarte</h1>
+    <nav class="flex items-center justify-center gap-1">
+        {links.map((link, i) => {
+            return <>{i > 0 && <div class="separator"></div>}<a class="p-2" href={link.href}>{link.text}</a></>
+        })}
+    </nav>
+</header>
+
+<style>
+    .separator {
+        border-radius: 100%;
+        width: 5px;
+        height: 5px;
+        background-color: black;
+        margin-bottom: .1lh;
+    }
+</style>

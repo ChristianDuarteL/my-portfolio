@@ -1,0 +1,43 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+    links: {
+        text: string;
+        href: string;
+    }[];
+
+    socials: {
+        text: string;
+        href: string;
+        icon: string;
+    }[];
+}
+
+---
+
+<footer class="border-t-1 pt-4 pb-4 min-h-40 flex justify-center px-6">
+    <nav class="flex justify-center w-full max-w-6xl gap-4 flex-col md:flex-row">
+        <div class="flex flex-col flex-1">
+            <span class="font-bold">Christian Duarte. { (new Date()).getFullYear() }</span>
+            <span>La Paz, Baja California Sur, Mexico</span>
+        </div>
+        <div class="separator-horizontal md:separator-vertical"></div>
+        <div class="flex flex-col flex-1">
+            <span class="font-bold">Links</span>
+            {Astro.props.links.map((link, i) => {
+                return <a href={link.href}>{link.text}</a>
+            })}
+        </div>
+        <div class="separator-horizontal md:separator-vertical"></div>
+        <div class="flex flex-col flex-1">
+            <span class="font-bold">Socials</span>
+            {Astro.props.socials.map((social, i) => {
+                return <a class="flex gap-1" href={social.href}>
+                    <Icon name={social.icon} class="text-xl"></Icon>
+                    <span class="inline-block">{social.text}</span>
+                </a>
+            })}
+        </div>
+    </nav>
+</footer>
