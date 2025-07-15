@@ -1,4 +1,6 @@
 ---
+import { BOARD_LENGTH, BOARD_SIZE } from '../lib/sudoku';
+
 interface Props {
     class: string;
 }
@@ -6,31 +8,172 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<canvas class={className} id="sudoku"></canvas>
+<div class={`${className} relative`} id="sudoku">
+    {
+        Array(9).fill(0).map((_, i) => 
+            <div class="grid grid-cols-3 group border-1 border-t-0 border-[#dfdfdf] border-l-[#aaa] border-r-[#aaa]
+                first:border-t-1 first:border-t-[#aaa] nth-[3n]:border-b-[#aaa]
+            ">
+                {Array(3).fill(0).map((_, j) =>
+                    <div class="grid grid-cols-3 border-r-[#aaa] border-r-1 last:border-0">
+                        {
+                            Array(3).fill(0).map((_, k) => 
+                                <div class="aspect-square flex items-center justify-center border-r-1 border-[#dfdfdf] bg-[#eee] 
+                                last:border-0
+                                ">
+                                    <div class="flex w-full h-full text-xl lg:text-3xl items-center justify-center font-sans-serif">
+                                        <input style="display: none;" class="w-full h-full text-center text-[#666] p-0 read-only:text-[#444] read-only:font-[500] outline-0 focus-visible:bg-[#eeee93]" type="number" data-sudoku-element-index={j * 3 + k + i * 9} min={1} max={9} tabindex="-1" /> 
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </div>
+                )}
+                
+            </div>
+        )
+    }
+    <div class="absolute top-0 right-0 bottom-0 left-0 border-[#aaa] hidden" won-sudoku-overlay>
+        <div class="absolute bg-noise top-0 right-0 w-full h-full opacity-90 brightness-30" overlay-part></div>
+        <button class="absolute top-0 left-0 w-full h-full" hide-board-button></button>
+        <div class="absolute top-0 right-0 bottom-0 left-0 w-full h-full flex flex-col gap-1 items-center justify-center text-center" overlay-part>
+            <div class="flex flex-col items-center justify-center gap-1">
+                <span class="font-sans-serif font-bold text-5xl text-[#ddd]">You won</span>
+                <span class="font-sans-serif text text-[#ccc] leading-tight">You've completed today's sudoku,<br>come back tomorrow for more</span> 
+            </div>
+            <button class="font-sans-serif text-[#c7c7ff] p-1" show-board-button>Check board</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        /* display: none; <- Crashes Chrome on hover */
+        -webkit-appearance: none;
+        margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+    }
+
+    input[type=number] {
+        -moz-appearance:textfield; /* Firefox */
+    }
+</style>
 
 <script>
-    const sudokuCanvas = document.getElementById("sudoku")
-    if(sudokuCanvas instanceof HTMLCanvasElement) {
+    import { BLANK_CHAR, BOARD_LENGTH, BOARD_SIZE, Sudoku } from "../lib/sudoku";
+    const sudoku = new Sudoku();
+    const fillableSudoku = sudoku.cloneButHide(81-60);
+    const board = document.querySelector("#sudoku");
 
-        const repaint = () => {
-            const ctx = sudokuCanvas.getContext("2d");
-            if(ctx == null) {
-                return;
-            }
-            ctx.clearRect(0, 0, sudokuCanvas.width, sudokuCanvas.height);
-            ctx.fillStyle = "#999";
-            ctx.textAlign = "center";
-            ctx.font = "bold 40px sans-serif";
-            ctx.textBaseline = "middle";
-            ctx.fillText("Sudoku", sudokuCanvas.width / 2, sudokuCanvas.height / 2);
-        };
-        
-        const sudokuResizeObserver = new ResizeObserver(() => {
-            sudokuCanvas.width = sudokuCanvas.offsetWidth;
-            sudokuCanvas.height = sudokuCanvas.offsetHeight;
-            repaint();
+    if(board instanceof HTMLElement) {
+        const wonOverlay = board.querySelector("div[won-sudoku-overlay]");
+        wonOverlay?.querySelector("button[hide-board-button]")?.addEventListener("click", () => {
+            wonOverlay.querySelectorAll("[overlay-part]").forEach(part => part.classList.remove("hidden"));
         });
-        sudokuResizeObserver.observe(sudokuCanvas);
-        repaint();
+        wonOverlay?.querySelector("button[show-board-button]")?.addEventListener("click", () => {
+            wonOverlay.querySelectorAll("[overlay-part]").forEach(part => part.classList.add("hidden"));
+        });
+
+        const elements = board.querySelectorAll("[data-sudoku-element-index]");
+        const changeSelectAllow = (value: boolean) => {
+            for(const element of elements) {
+                if(element instanceof HTMLInputElement) {
+                    element.tabIndex = value ? 0 : -1;
+                }
+            }
+        }
+        for(let i = 0; i < elements.length; ++i) {
+            const element = elements[i];
+            
+            if(!(element instanceof HTMLInputElement)) {
+                continue;
+            }
+            element.style.display = "";
+            
+            const index = parseInt(element.dataset.sudokuElementIndex ?? "ASDF");
+            
+            if(isNaN(index)) {
+                continue;
+            }
+            
+            if(fillableSudoku.fixed_board[index] !== BLANK_CHAR) {
+                element.value = fillableSudoku.fixed_board[index];
+                element.readOnly = true;
+            }
+
+            element.addEventListener("keydown", (event) => {
+                if(event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight") {
+                    event.preventDefault();
+                }
+                let newIndex = index;
+                switch(event.key) {
+                    case "ArrowUp":{
+                        newIndex = index - BOARD_LENGTH;
+                        if(newIndex < 0) {
+                            newIndex = index;
+                        }
+                    }
+                    break;
+                    case "ArrowDown":{
+                        newIndex = index + BOARD_LENGTH;
+                        if(newIndex >= BOARD_SIZE) {
+                            newIndex = index;
+                        }
+                    }
+                    break;
+                    case "ArrowLeft":{
+                        if(index % 9 == 0) {
+                            break;
+                        }
+                        newIndex = index - 1;
+                    }
+                    break;
+                    case "ArrowRight":{
+                        if(index % 9 == 8) {
+                            break;
+                        }
+                        newIndex = index + 1;
+                    }
+                    break;
+                }
+
+                if(newIndex !== index) {
+                    const newElement = board.querySelector(`[data-sudoku-element-index="${newIndex}"]`);
+                    if(newElement instanceof HTMLInputElement) {
+                        newElement.focus();
+                    }
+                }
+            });
+
+            const setElementSelection = (col: number, row: number, value: boolean) => {
+                for(let i = 0; i < BOARD_LENGTH; ++i) {
+                    if(i !== col) {
+                        let index = i * BOARD_LENGTH + row;
+                        let element = board.querySelector(`[data-sudoku-element-index="${index}"]`);
+                        element?.classList.toggle('bg-[#e4e4e4]', value);
+                    }
+                    if(i !== row) {
+                        let index = col * BOARD_LENGTH + i;
+                        let element = board.querySelector(`[data-sudoku-element-index="${index}"]`);
+                        element?.classList.toggle('bg-[#e4e4e4]', value);
+                    }
+                }
+            };
+
+            element.addEventListener("focus", () => {
+                const col = Math.floor(index / BOARD_LENGTH);
+                const row = index % BOARD_LENGTH;
+                setElementSelection(col, row, true);
+                changeSelectAllow(true);
+            })
+            
+            element.addEventListener("blur", () => {
+                const col = Math.floor(index / BOARD_LENGTH);
+                const row = index % BOARD_LENGTH;
+                setElementSelection(col, row, false);
+                changeSelectAllow(false);
+            })
+            
+        }
     }
 </script>
