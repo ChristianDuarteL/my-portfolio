@@ -3,13 +3,14 @@ interface Props {
     src: string;
     alt: string;
     caption?: string;
+    class?: string;
 }
 
-const { src, alt, caption } = Astro.props;
+const { src, alt, caption, class: className } = Astro.props;
 ---
 
 <figure class="flex flex-col">
-    <div class='border-1 border-[#aaa]'>
+    <div class={`${className} border-1 border-[#aaa]`}>
         <img src={src} alt={alt} class="object-cover w-full h-full" />
     </div>
     {caption && <figcaption class="p-1 font-sans-serif font-[500]">{caption}</figcaption>}
