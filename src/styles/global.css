@@ -41,6 +41,14 @@
   th, td {
     @apply px-1 py-0.5;
   }
+
+  button {
+    @apply cursor-pointer
+  }
+
+  a:focus, a:hover {
+    text-decoration: underline;
+  }
 }
 
 @utility separator-vertical {
