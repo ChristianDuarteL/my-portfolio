@@ -116,6 +116,29 @@ export class Sudoku {
         }
     }
 
+    isSolved(): boolean {
+        if(this.board.includes(BLANK_CHAR)) {
+            return false;
+        }
+        for(let i = 0; i < BOARD_LENGTH; ++i) {
+            const line = new Set(this.getLine(i).split(''));
+            if(line.size != BOARD_LENGTH) {
+                return false;
+            }
+            
+            const column = new Set(this.getColumn(i).split(''));
+            if(column.size != BOARD_LENGTH) {
+                return false;
+            }
+            
+            const box = new Set(this.getBox(i % INNER_SQUARE_LENGTH, Math.floor(i / INNER_SQUARE_LENGTH)).split(''));
+            if(box.size != BOARD_LENGTH) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     getLine(line: number): string {
         return this.board.slice(line * BOARD_LENGTH, (line + 1) * BOARD_LENGTH);
     }

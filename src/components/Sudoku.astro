@@ -60,9 +60,9 @@ const { class: className } = Astro.props;
 </style>
 
 <script>
-    import { BLANK_CHAR, BOARD_LENGTH, BOARD_SIZE, Sudoku } from "../lib/sudoku";
-    const sudoku = new Sudoku();
-    const fillableSudoku = sudoku.cloneButHide(81-60);
+    import { BLANK_CHAR, BOARD_LENGTH, BOARD_SIZE, DIGITS, Sudoku } from "../lib/sudoku";
+    const fillableSudoku = new Sudoku().cloneButHide(81-60);
+    const sudoku = new Sudoku(fillableSudoku.board);
     const board = document.querySelector("#sudoku");
 
     if(board instanceof HTMLElement) {
@@ -84,7 +84,7 @@ const { class: className } = Astro.props;
         }
         for(let i = 0; i < elements.length; ++i) {
             const element = elements[i];
-            
+
             if(!(element instanceof HTMLInputElement)) {
                 continue;
             }
@@ -141,6 +141,26 @@ const { class: className } = Astro.props;
                     const newElement = board.querySelector(`[data-sudoku-element-index="${newIndex}"]`);
                     if(newElement instanceof HTMLInputElement) {
                         newElement.focus();
+                    }
+                }
+            });
+
+            let previousValue = "";
+
+            element.addEventListener("input", (e) => {
+                if(e instanceof InputEvent && e.data) {
+                    if(e.data.length > 1 || (e.data.length == 1 && !DIGITS.includes(e.data))) {
+                        element.value = previousValue;
+                        return;
+                    }
+                    if(e.data.length == 1) {
+                        element.value = e.data;
+                    }
+                    previousValue = element.value;
+                    sudoku.setNumberAt(index, element.value);
+                    if(sudoku.isSolved()) {
+                        wonOverlay?.classList.toggle("hidden", false);
+                        return;
                     }
                 }
             });
