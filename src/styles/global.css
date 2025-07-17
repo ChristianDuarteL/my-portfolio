@@ -49,6 +49,10 @@
   a:focus, a:hover {
     text-decoration: underline;
   }
+
+  p {
+    @apply leading-normal mb-2;
+  }
 }
 
 @utility separator-vertical {
