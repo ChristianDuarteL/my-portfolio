@@ -4,6 +4,16 @@
   --font-serif-title: 'Bodoni Moda Variable', 'sans-serif';
   --font-serif: 'Aleo Variable', 'sans-serif';
   --font-sans-serif: 'Roboto Variable', 'sans-serif';
+
+  --offset-path-border: border-box;
+  --offset-path-view: view-box;
+  --offset-path-fill: fill-box;
+  --offset-path-content: content-box;
+  --offset-path-padding: padding-box;
+}
+
+@utility offset-path-* {
+  offset-path: --value(--offset-path-*);
 }
 
 @layer base {
@@ -42,7 +52,7 @@
     @apply px-1 py-0.5;
   }
 
-  button {
+  button, [role="button"] {
     @apply cursor-pointer
   }
 

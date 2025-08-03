@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import NewsPaperImage from '../components/NewsPaperImage.astro';
 import Sudoku from '../components/Sudoku.astro';
 import Layout from '../layouts/Layout.astro';
+import Coupon from '../components/Coupon.astro';
 ---
 
 <Layout>
@@ -54,6 +55,11 @@ import Layout from '../layouts/Layout.astro';
             <div class="flex flex-col  gap-2">
                 <h3 class="text-xl text-center">Daily Sudoku</h3>
                 <Sudoku class='w-full aspect-square' />
+            </div>
+        </div>
+        <div class="grid-cols-12 grid gap-2 mt-10">
+            <div class="col-span-8">
+                <Coupon class="w-full aspect-square"></Coupon>
             </div>
         </div>
     </main>
