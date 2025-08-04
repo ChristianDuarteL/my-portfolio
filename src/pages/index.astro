@@ -5,6 +5,8 @@ import NewsPaperImage from '../components/NewsPaperImage.astro';
 import Sudoku from '../components/Sudoku.astro';
 import Layout from '../layouts/Layout.astro';
 import Coupon from '../components/Coupon.astro';
+import CouponView from '../components/CouponView.astro';
+import "atropos/css";
 ---
 
 <Layout>
@@ -59,7 +61,7 @@ import Coupon from '../components/Coupon.astro';
         </div>
         <div class="grid-cols-12 grid gap-2 mt-10">
             <div class="col-span-8">
-                <Coupon class="w-full aspect-square"></Coupon>
+                <Coupon></Coupon>
             </div>
         </div>
     </main>
@@ -75,6 +77,7 @@ import Coupon from '../components/Coupon.astro';
             { text: 'Email', href: 'mailto:w.christian.duarte@outlook.com', icon: 'email' }
         ]}
     ></Footer>
+    <CouponView></CouponView>
 </Layout>
 
 

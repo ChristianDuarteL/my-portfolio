@@ -76,3 +76,7 @@
   height: 1px;
   background-color: black;
 }
+
+body:has(dialog[open]) {
+  overflow: hidden;
+}
