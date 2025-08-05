@@ -1,10 +1,10 @@
 ---
 ---
+<dialog class="fixed inset-0 z-10 overflow-hidden" aria-label="Coupon" role="dialog" tabindex="-1" coupon-dialog>
 
-<dialog open data-coupon-dialog>
-    <div class="fixed inset-0 z-10">
+    <div class="fixed inset-0 z-10 overflow-hidden">
         <div class="absolute inset-0 bg-noise opacity-75 brightness-50"></div>
-        <div class="absolute inset-0 z-10 overflow-y-auto">
+        <div class="absolute inset-0 z-10">
             <div class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
                 <div class="container max-w-2xl mx-auto">
                     <div class="atropos my-atropos">
@@ -14,7 +14,12 @@
                             <div class="atropos-rotate">
                                 <!-- inner container (required) -->
                                 <div class="atropos-inner">
-                                    <img src={"/coupons/image2.png"} alt={"coupon"} class="[image-rendering:pixelated] perspective-far absolute border-1 border-dashed object-cover w-full h-full user-select-none" draggable="false" />
+                                    <div class="images aspect-[16/9] w-full">
+                                        <div class="absolute w-full h-full" coupon-image>
+
+                                        </div>
+                                    </div>
+                                    <!-- <img src={"/coupons/image2.png"} alt={"coupon"} class="[image-rendering:pixelated] perspective-far absolute border-1 border-dashed object-cover w-full h-full user-select-none" draggable="false" /> -->
                                     <!--<img src={"https://placehold.co/160x90/000000/FFFFFF"} alt={"coupon"} class="perspective-far absolute border-1 border-dashed object-cover w-full h-full user-select-none" draggable="false" />  --> 
                                 </div>
                             </div>
@@ -27,10 +32,41 @@
 </dialog>
 
 <script>
+    import { Flip } from 'gsap/Flip';
+    import gsap from 'gsap';
     import Atropos from 'atropos';
+    gsap.registerPlugin(Flip);
 
-    const myAtropos = Atropos({
-        el: '.my-atropos',
+    export function runDialog(el: HTMLElement) {
+        const dialog = document.querySelector('[coupon-dialog]') as HTMLDialogElement;
+        if (dialog) {
+            dialog.showModal();
+        }
+
+        const inner = dialog.querySelector('.atropos-inner') as HTMLElement;
+        inner.style.overflow = 'visible';
+        const state = Flip.getState(el);
+        inner.querySelector('[coupon-image]')?.appendChild(el);
+        // TODO make flip without changing the element from the DOM
+        Flip.from(state, {
+            scale: true,
+            duration: .5,
+            paused: true,
+            absolute: true,
+        }).play().then(() => {
+            inner.style.overflow = 'hidden';
+
+            const myAtropos = Atropos({
+                el: '.my-atropos',
+                alwaysActive: true,
+            });
+        });
+    }
+    
+
+    // TODO: Fix types
+    window.addEventListener('show-coupon', ({detail: {coupon}}) => {
+        runDialog(coupon.querySelector('img') as HTMLElement);
     });
 </script>
 

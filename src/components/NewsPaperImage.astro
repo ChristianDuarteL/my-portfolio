@@ -10,8 +10,8 @@ const { src, alt, caption, class: className } = Astro.props;
 ---
 
 <figure class="flex flex-col">
-    <div class={`${className} border-1 border-[#aaa]`}>
-        <img src={src} alt={alt} class="object-cover w-full h-full" />
+    <div class={`border-1 border-[#aaa]`}>
+        <img src={src} alt={alt} class={`${className} object-cover w-full max-h-full`} />
     </div>
     {caption && <figcaption class="p-1 font-sans-serif font-[500]">{caption}</figcaption>}
 </figure>

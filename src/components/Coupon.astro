@@ -20,7 +20,7 @@
         const animationEnded = (e: TransitionEvent) => {
             if(e.propertyName === 'offset-distance') { 
                 coupon.classList.remove('active');
-                /// TODO: Show the "examine" screen
+                window.dispatchEvent(new CustomEvent('show-coupon', {detail: {coupon}}));
                 coupon.removeEventListener('transitionend', animationEnded);
             }
         }
