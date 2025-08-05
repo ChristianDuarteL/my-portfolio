@@ -2,7 +2,10 @@
 ---
 
 <article class="aspect-[16/9] w-full relative flex items-stretch content-stretch border-1 border-dashed hover:[--scissors-angle:0.2] active:[--scissors-angle:0.1] group" role="button" aria-label="Coupon" tabindex="0" data-coupon> 
-    <img src={"/coupons/image2.png"} alt={"coupon"} class="object-cover w-full h-full [image-rendering:pixelated]" />
+    <div coupon-container class="relative w-full h-full overflow-hidden">
+        <img src={"/coupons/image2-bg.png"} alt={"coupon"} class="object-cover w-full h-full [image-rendering:pixelated] absolute" />
+        <img src={"/coupons/image2.png"} alt={"coupon"} class="object-cover w-full h-full [image-rendering:pixelated] absolute" />
+    </div>
     <div class="offset-path-border absolute w-10 h-10 0bg-amber-100 flex items-center justify-center transition-none [.active>&]:transition-[offset-distance] duration-1000 ease-linear" style="offset-distance: calc(var(--scissors-progress, 0) * 100% + 80px);">
         <svg class="absolute transform -translate-y-[1px]  rotate-[calc(var(--scissors-angle,.15)/2*360deg)] origin-[45%_80%] transition-transform" viewBox="0 0 102.65 22.216" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <path d="m7.9162 0.66335c-1.5442 0.50484-2.9868 1.2882-4.1939 2.3129-4.9764 3.5387-4.7644 11.415-0.54702 15.455 4.3801 4.2225 11.206 3.4148 16.321 1.1942 6.1613-2.6747 19.639 0.38312 19.639 0.38312l8.4278 2.2083 41.827-0.79302c5.1569-0.44271 10.846-2.6207 13.264-8.7604l-43.707 9.25e-4 -14.86 0.176s-19.527 0.2102-21.039-0.77244c-2.0043-1.3023 0.64351-2.9117-2.1972-7.4839-2.764-4.4488-8.3021-5.4348-12.935-3.9203zm1.0596 3.3191c0.79127-0.26196 1.6087-0.41074 2.4108-0.42502 6.1905-0.82187 10.643 8.3477 5.7808 12.492-0.76492 0.817-1.673 1.3913-2.6542 1.7463-4.2519 1.5391-9.8508-1.0239-10.872-5.6618-1.0227-3.7473 1.9063-7.0166 5.3351-8.1518z"/>
@@ -14,13 +17,15 @@
 </article>
 
 <script>
-    const coupons = document.querySelectorAll('[data-coupon]');
-    coupons.forEach(coupon => {
+    import { CouponClickedEvent } from "../lib/coupons";
+
+    const couponElements = document.querySelectorAll('[data-coupon]');
+    couponElements.forEach(coupon => {
         if(!(coupon instanceof HTMLElement)) return;
         const animationEnded = (e: TransitionEvent) => {
             if(e.propertyName === 'offset-distance') { 
                 coupon.classList.remove('active');
-                window.dispatchEvent(new CustomEvent('show-coupon', {detail: {coupon}}));
+                window.dispatchEvent(new CouponClickedEvent(coupon));
                 coupon.removeEventListener('transitionend', animationEnded);
             }
         }
