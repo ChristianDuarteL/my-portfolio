@@ -13,4 +13,8 @@ export class CouponClickedEvent extends CustomEvent<CouponClickedEventDetail> {
             }
         });
     }
+
+    get coupon(): HTMLElement {
+        return this.detail.coupon;
+    }
 }

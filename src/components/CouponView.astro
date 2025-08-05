@@ -35,6 +35,8 @@
     import { Flip } from 'gsap/Flip';
     import gsap from 'gsap';
     import Atropos from 'atropos';
+    import { CouponClickedEvent } from '@/lib/coupons';
+    
     gsap.registerPlugin(Flip);
 
     export function runDialog(el: HTMLElement) {
@@ -65,8 +67,9 @@
     
 
     // TODO: Fix types
-    window.addEventListener('show-coupon', ({detail: {coupon}}) => {
-        runDialog(coupon.querySelector('[coupon-container]') as HTMLElement);
+    window.addEventListener('show-coupon', (event) => {
+        if(!(event instanceof CouponClickedEvent)) return;
+        runDialog(event.coupon.querySelector('[coupon-container]') as HTMLElement);
     });
 </script>
 
