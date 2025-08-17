@@ -1,3 +1,4 @@
+import { COUPONS } from "@/consts/coupons";
 import type Coupon from "@/types/coupon";
 
 export interface CouponClickedEventDetail {
@@ -25,6 +26,10 @@ export class CouponClickedEvent extends CustomEvent<CouponClickedEventDetail> {
     get coupon(): Coupon {
         return this.detail.coupon;
     }
+}
+
+export function getCoupons(ratio: number): Coupon[] {
+    return COUPONS.filter(coupon => coupon.width / coupon.height === ratio);
 }
 
 export function makeCoupon(coupon: Coupon): HTMLElement {

@@ -24,8 +24,8 @@ export const COUPONS: Coupon[] = [
                 offset: 5
             }
         ],
-        width: 160,
-        height: 90,
+        width: 200,
+        height: 100,
         alt: "coupon"
     }
 ];

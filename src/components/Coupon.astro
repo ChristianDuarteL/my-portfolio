@@ -3,7 +3,7 @@ import Lorem from "./Lorem.astro";
 
 ---
 
-<article class="aspect-[16/9] w-full relative flex items-stretch content-stretch border-1 border-dashed hover:[--scissors-angle:0.2] active:[--scissors-angle:0.1] group" role="button" aria-label="Coupon" tabindex="0" data-coupon> 
+<article class="w-full relative flex items-stretch content-stretch border-1 border-dashed hover:[--scissors-angle:0.2] active:[--scissors-angle:0.1] group" role="button" aria-label="Coupon" tabindex="0" data-coupon> 
     <div coupon-background class="absolute w-full h-full overflow-hidden opacity-90">
         <div class="absolute w-full h-full bg-noise brightness-70 contrast-200"></div>
         <div class="text-sm absolute w-[110%] h-[110%] top-[-5%] left-[-5%] blur-[1px] ">
@@ -28,7 +28,9 @@ import Lorem from "./Lorem.astro";
     const couponElements = document.querySelectorAll('[data-coupon]');
     couponElements.forEach(coupon => {
         if(!(coupon instanceof HTMLElement)) return;
-        const couponElement = coupon.querySelector('[coupon-body]')?.appendChild(makeCoupon(COUPONS[1]));
+        const couponData = COUPONS[1];
+        coupon.style.aspectRatio = `${couponData.width} / ${couponData.height}`;
+        const couponElement = coupon.querySelector('[coupon-body]')?.appendChild(makeCoupon(couponData));
         const animationEnded = (e: TransitionEvent) => {
             if(e.propertyName === 'offset-distance') { 
                 coupon.classList.remove('active');

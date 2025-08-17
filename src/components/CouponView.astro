@@ -1,11 +1,11 @@
 ---
 ---
-<dialog class="fixed inset-0 z-10 overflow-hidden" aria-label="Coupon" role="dialog" tabindex="-1" coupon-dialog>
+<dialog aria-label="Coupon" role="dialog" tabindex="-1" coupon-dialog>
     <div class="fixed inset-0 z-10 overflow-hidden">
-        <div class="absolute inset-0 bg-noise opacity-75 brightness-50"></div>
-        <div class="absolute inset-0 z-10">
+        <div class="absolute inset-0 bg-noise opacity-75 brightness-100"></div>
+        <div class="absolute inset-0">
             <div class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
-                <div class="container max-w-2xl mx-auto">
+                <div class="container max-w-2xl mx-auto flex flex-col gap-14">
                     <div class="atropos">
                         <!-- scale container (required) -->
                         <div class="atropos-scale">
@@ -13,13 +13,7 @@
                             <div class="atropos-rotate">
                                 <!-- inner container (required) -->
                                 <div class="atropos-inner">
-                                    <div class="images aspect-[16/9] w-full">
-                                        <div class="absolute w-full h-full" coupon-image>
-
-                                        </div>
-                                    </div>
-                                    <!-- <img src={"/coupons/image2.png"} alt={"coupon"} class="[image-rendering:pixelated] perspective-far absolute border-1 border-dashed object-cover w-full h-full user-select-none" draggable="false" /> -->
-                                    <!--<img src={"https://placehold.co/160x90/000000/FFFFFF"} alt={"coupon"} class="perspective-far absolute border-1 border-dashed object-cover w-full h-full user-select-none" draggable="false" />  --> 
+                                    <div class="absolute w-full" coupon-image></div>
                                 </div>
                             </div>
                         </div>
@@ -37,25 +31,28 @@
     import { CouponClickedEvent } from '@/lib/coupons';
     import type Coupon from '@/types/coupon';
     import { makeCoupon } from '@/lib/coupons';
+    import { COUPONS } from '@/consts/coupons';
     
     gsap.registerPlugin(Flip);
 
-    export function runDialog(coupon: Coupon, el: HTMLElement) {
+    export function runDialog(coupon: Coupon, el?: HTMLElement) {
         const dialog = document.querySelector('[coupon-dialog]') as HTMLDialogElement;
         if (dialog) {
             dialog.showModal();
         }
 
         const inner = dialog.querySelector('.atropos-inner') as HTMLElement;
-        const couponCont = el.querySelector('[coupon-container]') as HTMLElement;
+        const couponCont = el?.querySelector('[coupon-container]') as HTMLElement | undefined;
         const couponImage = dialog.querySelector('[coupon-image]') as HTMLElement;
-
+        //couponImage.style.aspectRatio = `${coupon.width} / ${coupon.height}`;
+        inner.style.aspectRatio = `${coupon.width} / ${coupon.height}`;
         const newCoupon = makeCoupon(coupon);
-        console.log(couponImage, couponCont);
         couponImage.appendChild(newCoupon);
 
         const state = Flip.getState(newCoupon);
-        Flip.fit(newCoupon, couponCont);
+        if(couponCont) {
+            Flip.fit(newCoupon, couponCont);
+        }
         console.log(state);
         inner.style.overflow = 'visible';
         Flip.to(state, {
@@ -77,6 +74,7 @@
         if(!(event instanceof CouponClickedEvent)) return;
         runDialog(event.coupon, event.couponElement);
     });
+    runDialog(COUPONS[1]);
 </script>
 
 <style>
