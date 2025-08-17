@@ -20,8 +20,7 @@ export const COUPONS: Coupon[] = [
             },
             {
                 src: "/coupons/image2.png",
-                alt: "coupon",
-                offset: 5
+                alt: "coupon"
             }
         ],
         width: 200,
