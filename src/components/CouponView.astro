@@ -89,7 +89,6 @@ import { Icon } from 'astro-icon/components';
         if(!(event instanceof CouponClickedEvent)) return;
         runDialog(event.coupon, event.couponElement);
     });
-    runDialog(COUPONS[1]);
 </script>
 
 <style>
